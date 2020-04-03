@@ -70,13 +70,13 @@ public class ConsoleUI {
                     taskName = getLineFromUser("task name");
 
                     sourceBoardOptional = getBoardByName(sourceBoardName);
-                    if (checkOptionalIfPresent(sourceBoardOptional, "Board", sourceBoardName) == false) {
+                    if (!checkOptionalIfPresent(sourceBoardOptional, "Board", sourceBoardName)) {
                         break;
                     }
                     sourceBoard = sourceBoardOptional.get();
 
                     taskOptional = sourceBoard.getTaskByName(taskName);
-                    if (checkOptionalIfPresent(taskOptional, "Task", taskName) == false) {
+                    if (!checkOptionalIfPresent(taskOptional, "Task", taskName)) {
                         break;
                     }
                     task = taskOptional.get();
@@ -99,19 +99,19 @@ public class ConsoleUI {
                     targetBoardName = getLineFromUser("target board");
                     taskName = getLineFromUser("task name");
                     sourceBoardOptional = getBoardByName(sourceBoardName);
-                    if (checkOptionalIfPresent(sourceBoardOptional, "Board", sourceBoardName) == false) {
+                    if (!checkOptionalIfPresent(sourceBoardOptional, "Board", sourceBoardName)) {
                         break;
                     }
                     sourceBoard = sourceBoardOptional.get();
 
                     targetBoardOptional = getBoardByName(targetBoardName);
-                    if (checkOptionalIfPresent(targetBoardOptional, "Board", targetBoardName) == false) {
+                    if (!checkOptionalIfPresent(targetBoardOptional, "Board", targetBoardName)) {
                         break;
                     }
                     targetBoard = targetBoardOptional.get();
 
                     Optional<Task> taskOptional = sourceBoard.getTaskByName(taskName);
-                    if (checkOptionalIfPresent(taskOptional, "Task", taskName) == false) {
+                    if (!checkOptionalIfPresent(taskOptional, "Task", taskName)) {
                         break;
                     }
                     task = taskOptional.get();
@@ -146,7 +146,7 @@ public class ConsoleUI {
 
     private <T> boolean checkOptionalIfPresent(Optional<T> optional, String resourceName, String name) {
         boolean isPresent = optional.isPresent();
-        if (isPresent == false) {
+        if (!isPresent) {
             System.out.println(resourceName + " with name " + name + " not found!");
         }
         return isPresent;

@@ -3,9 +3,6 @@ package pl.tt.model;
 import com.sun.istack.internal.NotNull;
 import pl.tt.IdProvider;
 
-/**
- * @author TenDan
- */
 public class Task implements Comparable<Task> {
 
     private Long id;
