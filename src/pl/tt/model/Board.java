@@ -1,6 +1,7 @@
 package pl.tt.model;
 
 import pl.tt.IdProvider;
+import pl.tt.utils.TaskNameComparator;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,7 +5,7 @@ import pl.tt.IdProvider;
 /**
  * @author ciepluchs
  */
-public class Task {
+public class Task implements Comparable<Task> {
 
     private Long id;
     private String owner;
@@ -30,6 +30,10 @@ public class Task {
         return name;
     }
 
+    public long getID() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
@@ -38,5 +42,10 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Task otherTask) {
+        return otherTask.getName().compareTo(this.getName());
     }
 }
