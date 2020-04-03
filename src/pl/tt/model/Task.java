@@ -1,9 +1,10 @@
 package pl.tt.model;
 
+import com.sun.istack.internal.NotNull;
 import pl.tt.IdProvider;
 
 /**
- * @author ciepluchs
+ * @author TenDan
  */
 public class Task implements Comparable<Task> {
 
