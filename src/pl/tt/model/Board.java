@@ -4,6 +4,7 @@ import pl.tt.IdProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Board {
 
@@ -23,6 +24,17 @@ public class Board {
 
     public void removeTask(Task task) {
         tasks.remove(task);
+    }
+
+    public Optional<Task> getTaskByName(String taskName) {
+        for (int i = 0; i < tasks.size(); i++) {
+            Task currentTask = tasks.get(i);
+            if (currentTask.getName().equals(taskName) == true) {
+                return Optional.of(currentTask);
+            }
+        }
+
+        return Optional.empty();
     }
 
     public void printTasks() {
