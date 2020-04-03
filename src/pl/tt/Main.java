@@ -1,35 +1,49 @@
 package pl.tt;
 
-import java.util.ArrayList;
-import java.util.List;
+import pl.tt.model.Board;
+import pl.tt.model.Task;
+
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
+        Scanner in = new Scanner(System.in);
+        System.out.print("Type name: ");
+        String userName = in.nextLine();
 
-        System.out.println("Podaj imię: ");
-        String userName = input.nextLine();
+        Board board1 = new Board("To do");
+        Board board2 = new Board("In progress");
+        Board board3 = new Board("Done");
 
-        Task task = new Task(userName, "zakupy");
-        Task task1 = new Task(userName, "sprzątanie", "posprzątaj kuchnię");
+        String userInput = "";
+        while (!userInput.equalsIgnoreCase("quit")) {
+            System.out.print("Type command: ");
+            userInput = in.nextLine();
 
-        System.out.println(task.toString());
-        System.out.println(task1.toString());
-
-        List<Task> toDoTasks = new ArrayList<>();
-        System.out.println(toDoTasks.size());
-        toDoTasks.add(task);
-        toDoTasks.add(task1);
-        System.out.println(toDoTasks.size());
-
-        for (Task task3: toDoTasks) {
-            System.out.println(task3.toString());
+            switch (userInput) {
+                case "quit":
+                    break;
+                case "add task":
+                    System.out.print("Type task name: ");
+                    String taskName = in.nextLine();
+                    System.out.print("Type task description: ");
+                    String taskDescription = in.nextLine();
+                    Task task = new Task(userName, taskName, taskDescription);
+                    board1.addTask(task);
+                    break;
+                case "show todo":
+                    board1.printTasks();
+                    break;
+                case "show in progress":
+                    board2.printTasks();
+                    break;
+                case "show done":
+                    board3.printTasks();
+                    break;
+                case "exit":
+                    return;
+            }
         }
-
-        toDoTasks.forEach(task4 -> {
-            System.out.println(task4.toString());
-        });
     }
 }
