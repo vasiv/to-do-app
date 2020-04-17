@@ -1,0 +1,6 @@
+
+List of possible commands:exit/quit - terminates program
+show [todo/in progress/done] - shows given board content
+add task - adds task to the given board
+move task - moves task from one board to another
+remove task - removes task from given board

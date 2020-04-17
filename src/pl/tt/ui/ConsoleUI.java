@@ -3,12 +3,16 @@ package pl.tt.ui;
 import pl.tt.BoardManager;
 import pl.tt.model.Board;
 import pl.tt.model.Task;
+import pl.tt.utils.FileUtils;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Scanner;
 
 
 public class ConsoleUI {
+    private static final Path HELP_PATH = Paths.get("help.txt");
     private Scanner in;
     private String userName;
     private String taskName;
@@ -43,7 +47,8 @@ public class ConsoleUI {
     }
 
     public void execute() {
-        showHelp();
+        System.out.println(getHelp());
+
         userName = getLineFromUser("username");
 
         String userInput = "";
@@ -86,7 +91,7 @@ public class ConsoleUI {
                     board1.printTasks();
                     break;
                 case "help":
-                    showHelp();
+                    System.out.println(getHelp());
                     break;
                 case "show in progress":
                     board2.printTasks();
@@ -134,14 +139,25 @@ public class ConsoleUI {
         return Optional.empty();
     }
 
-    private void showHelp() {
-        System.out.println("List of possible commands:");
-        System.out.println("exit/quit - terminates program");
-        System.out.println("show [" + todoBoardName + "/" + inProgressBoardName + "/" + doneBoardName + "] - shows given board content");
-        System.out.println("add task - adds task to the given board");
-        System.out.println("move task - moves task from one board to another");
-        System.out.println("remove task - removes task from given board\n");
+    private String getHelp() {
+        String helpContent = FileUtils.readFileAsString(HELP_PATH);
+        if (helpContent.isEmpty()) {
+            helpContent = initializeHelp();
+        }
+        return helpContent;
+    }
 
+    private String initializeHelp() {
+        StringBuilder stringBuilder = new StringBuilder("List of possible commands:");
+        stringBuilder.append("exit/quit - terminates program\n");
+        stringBuilder.append("show [" + todoBoardName + "/" + inProgressBoardName + "/" + doneBoardName + "] - shows given board content\n");
+        stringBuilder.append("add task - adds task to the given board\n");
+        stringBuilder.append("move task - moves task from one board to another\n");
+        stringBuilder.append("remove task - removes task from given board\n");
+
+        String helpContent = stringBuilder.toString();
+        FileUtils.createFile(HELP_PATH, helpContent);
+        return helpContent;
     }
 
     private <T> boolean checkOptionalIfPresent(Optional<T> optional, String resourceName, String name) {
