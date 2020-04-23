@@ -12,131 +12,106 @@ import java.util.Scanner;
 
 
 public class ConsoleUI {
-    private static final Path HELP_PATH = Paths.get("help.txt");
-    private Scanner in;
-    private String userName;
-    private String taskName;
-    private String taskDescription;
-    private String targetBoardName;
-    private String sourceBoardName;
-    private Task task;
 
-    Optional<Board> sourceBoardOptional;
-    Optional<Board> targetBoardOptional;
-    Optional<Task> taskOptional;
+    private static final String USERNAME = "userName";
+    private static final String EXIT = "exit";
+    private static final String TASK_NAME = "task name";
+    private static final String TASK_DESCRIPTION = "task description";
+    private static final String EMPTY_STRING = "";
+    private static final Path HELP_PATH = Paths.get("help.txt");
 
     Board sourceBoard;
     Board targetBoard;
-
-    private static final String todoBoardName = "todo";
-    private static final String inProgressBoardName = "in progress";
-    private static final String doneBoardName = "done";
-
-    Board board1 = new Board(todoBoardName);
-    Board board2 = new Board(inProgressBoardName);
-    Board board3 = new Board(doneBoardName);
-
-
     BoardManager boardManager;
+    private String targetBoardName;
+    private String sourceBoardName;
+    private String userName;
 
     public ConsoleUI() {
-        in = new Scanner(System.in);
         boardManager = new BoardManager();
-        sourceBoardName = "";
-        targetBoardName = "";
     }
 
     public void execute() {
+        Scanner in = new Scanner(System.in);
         System.out.println(getHelp());
-
-        userName = getLineFromUser("username");
-
-        String userInput = "";
-
-        while (!userInput.equalsIgnoreCase("quit")) {
-
+        userName = getLineFromUser(USERNAME);
+        String userInput = EMPTY_STRING;
+        while (!EXIT.equalsIgnoreCase(userInput)) {
             System.out.print("Type command: ");
             userInput = in.nextLine();
-
             switch (userInput) {
                 case "exit":
                     return;
-                case "quit":
-                    break;
                 case "add task":
-                    taskName = getLineFromUser("task name");
-                    taskDescription = getLineFromUser("task description");
-
-                    task = new Task(userName, taskName, taskDescription);
-                    board1.addTask(task);
+                    executeAddTaskAction();
                     break;
                 case "remove task":
-                    sourceBoardName = getLineFromUser("source board");
-                    taskName = getLineFromUser("task name");
-
-                    sourceBoardOptional = getBoardByName(sourceBoardName);
-                    if (checkOptionalIfPresent(sourceBoardOptional, "Board", sourceBoardName) == false) {
-                        break;
-                    }
-                    sourceBoard = sourceBoardOptional.get();
-
-                    taskOptional = sourceBoard.getTaskByName(taskName);
-                    if (checkOptionalIfPresent(taskOptional, "Task", taskName) == false) {
-                        break;
-                    }
-                    task = taskOptional.get();
-
-                    sourceBoard.removeTask(task);
+                    executeRemoveTaskAction();
+                    break;
                 case "show todo":
-                    board1.printTasks();
+                    executeShowTodoAction();
                     break;
                 case "help":
                     System.out.println(getHelp());
                     break;
                 case "show in progress":
-                    board2.printTasks();
+                    executeShowInProgressAction();
                     break;
                 case "show done":
-                    board3.printTasks();
+                    executeShowDoneAction();
                     break;
                 case "move task":
-                    sourceBoardName = getLineFromUser("source board");
-                    targetBoardName = getLineFromUser("target board");
-                    taskName = getLineFromUser("task name");
-                    sourceBoardOptional = getBoardByName(sourceBoardName);
-                    if (checkOptionalIfPresent(sourceBoardOptional, "Board", sourceBoardName) == false) {
-                        break;
-                    }
-                    sourceBoard = sourceBoardOptional.get();
-
-                    targetBoardOptional = getBoardByName(targetBoardName);
-                    if (checkOptionalIfPresent(targetBoardOptional, "Board", targetBoardName) == false) {
-                        break;
-                    }
-                    targetBoard = targetBoardOptional.get();
-
-                    Optional<Task> taskOptional = sourceBoard.getTaskByName(taskName);
-                    if (checkOptionalIfPresent(taskOptional, "Task", taskName) == false) {
-                        break;
-                    }
-                    task = taskOptional.get();
-
-                    boardManager.moveTask(sourceBoard, targetBoard, task);
+                    executeMoveTaskAction();
                     break;
             }
         }
     }
 
-    private Optional<Board> getBoardByName(String boardName) {
-        switch (boardName) {
-            case todoBoardName:
-                return Optional.of(board1);
-            case inProgressBoardName:
-                return Optional.of(board2);
-            case doneBoardName:
-                return Optional.of(board3);
+    //needs to be changed to allow to select board - not to enter it's name
+    private void executeMoveTaskAction() {
+        sourceBoardName = getLineFromUser("source board");
+        targetBoardName = getLineFromUser("target board");
+        String taskName = getLineFromUser("task name");
+        Board sourceBoard = boardManager.getBoard(sourceBoardName);
+        Board targetBoard = boardManager.getBoard(targetBoardName);
+        Optional<Task> maybeTask = this.sourceBoard.getTask(taskName);
+        if (checkOptionalIfPresent(maybeTask, "Task", taskName) == false) {
+            return;
         }
-        return Optional.empty();
+        Task task = maybeTask.get();
+
+        boardManager.moveTask(this.sourceBoard, this.targetBoard, task);
+    }
+
+    private void executeShowTodoAction() {
+        boardManager.getBoard("todo").printTasks();
+    }
+
+    private void executeShowInProgressAction() {
+        boardManager.getBoard("in progress").printTasks();
+    }
+
+    private void executeShowDoneAction() {
+        boardManager.getBoard("done").printTasks();
+    }
+
+    private void executeAddTaskAction() {
+        String taskName = getLineFromUser(TASK_NAME);
+        String taskDescription = getLineFromUser(TASK_DESCRIPTION);
+        Task task = new Task(userName, taskName, taskDescription);
+        boardManager.addTaskToBoard("todo", task);
+    }
+
+    private void executeRemoveTaskAction() {
+        String nameOfBoardWithTaskToBeRemoved = getLineFromUser("source board");
+        String nameOfTaskToBeRemoved = getLineFromUser("task name");
+        Board board = boardManager.getBoard(sourceBoardName);
+        Optional<Task> maybeTaskToBeRemoved = board.getTask(nameOfTaskToBeRemoved);
+        if (checkOptionalIfPresent(maybeTaskToBeRemoved, "Task", nameOfTaskToBeRemoved) == false) {
+            return;
+        }
+        Task task = maybeTaskToBeRemoved.get();
+        board.removeTask(task);
     }
 
     private String getHelp() {
@@ -144,19 +119,6 @@ public class ConsoleUI {
         if (helpContent.isEmpty()) {
             helpContent = initializeHelp();
         }
-        return helpContent;
-    }
-
-    private String initializeHelp() {
-        StringBuilder stringBuilder = new StringBuilder("List of possible commands:");
-        stringBuilder.append("exit/quit - terminates program\n");
-        stringBuilder.append("show [" + todoBoardName + "/" + inProgressBoardName + "/" + doneBoardName + "] - shows given board content\n");
-        stringBuilder.append("add task - adds task to the given board\n");
-        stringBuilder.append("move task - moves task from one board to another\n");
-        stringBuilder.append("remove task - removes task from given board\n");
-
-        String helpContent = stringBuilder.toString();
-        FileUtils.createFile(HELP_PATH, helpContent);
         return helpContent;
     }
 
@@ -168,9 +130,22 @@ public class ConsoleUI {
         return isPresent;
     }
 
+    private String initializeHelp() {
+        StringBuilder stringBuilder = new StringBuilder("List of possible commands:");
+        stringBuilder.append("exit - terminates program\n");
+//        stringBuilder.append("show [" + todoBoardName + "/" + inProgressBoardName + "/" + doneBoardName + "] - shows given board content\n");
+        stringBuilder.append("add task - adds task to the given board\n");
+        stringBuilder.append("move task - moves task from one board to another\n");
+        stringBuilder.append("remove task - removes task from given board\n");
+
+        String helpContent = stringBuilder.toString();
+        FileUtils.createFile(HELP_PATH, helpContent);
+        return helpContent;
+    }
+
     private String getLineFromUser(String resourceName) {
         System.out.println("Please provide " + resourceName + ": ");
-        return in.nextLine();
+        return new Scanner(System.in).nextLine();
     }
 
 }
