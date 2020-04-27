@@ -1,6 +1,7 @@
 package pl.tt.model;
 
 import pl.tt.IdProvider;
+import pl.tt.persistence.Persistable;
 import pl.tt.utils.TaskNameComparator;
 
 import java.util.ArrayList;
@@ -8,11 +9,17 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-public class Board {
+public class Board implements Persistable {
 
     private Long id;
     private String type;
     private List<Task> tasks;
+
+    @Override
+    public String toCsv() {
+        //TODO should return an object as CSV
+        return null;
+    }
 
     public Board(String type) {
         this.type = type;
